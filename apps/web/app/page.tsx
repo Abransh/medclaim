@@ -77,7 +77,7 @@ export default function Home() {
           <span className="text-teal-600">MedClaim</span> AI
         </h1>
         <p className="mt-1 text-sm text-slate-500">
-          Psychiatric documentation structuring & insurance risk analysis
+          Psychiatric billing assistant — structure notes, suggest codes, check risk
         </p>
       </header>
 

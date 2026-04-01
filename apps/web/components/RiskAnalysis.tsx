@@ -65,7 +65,7 @@ export default function RiskAnalysis({ data }: { data: RiskData }) {
 
       {data.reasons.length > 0 && (
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="mb-3 text-lg font-semibold text-slate-900">Risk Findings</h3>
+          <h3 className="mb-3 text-lg font-semibold text-slate-900">Areas to Review</h3>
           <div className="space-y-2">
             {data.reasons.map((r, i) => (
               <div key={i} className="rounded-lg border border-slate-100 p-3">
@@ -93,7 +93,7 @@ export default function RiskAnalysis({ data }: { data: RiskData }) {
 
       {data.fixes.length > 0 && (
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="mb-3 text-lg font-semibold text-slate-900">Recommended Fixes</h3>
+          <h3 className="mb-3 text-lg font-semibold text-slate-900">Suggested Improvements</h3>
           <div className="space-y-2">
             {data.fixes.map((fix) => (
               <div
