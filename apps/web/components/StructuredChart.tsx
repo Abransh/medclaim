@@ -20,7 +20,7 @@ export default function StructuredChart({ chart }: { chart: AnalysisResult["char
       `  ROS Level: ${chart.ros.ros_level}`,
       chart.ros.note ? `  Note: ${chart.ros.note}` : "",
       "",
-      `EXAM/ASSESSMENT: ${chart.exam_assessment}`,
+      `MENTAL STATUS EXAM: ${chart.exam_assessment}`,
       "",
       `MEDICAL DECISION MAKING:`,
       `  Problems: ${chart.mdm.problems.level} — ${chart.mdm.problems.justification}`,
@@ -106,7 +106,7 @@ export default function StructuredChart({ chart }: { chart: AnalysisResult["char
           </p>
         </div>
 
-        <Section title="Exam / Assessment" content={chart.exam_assessment} />
+        <Section title="Mental Status Exam" content={chart.exam_assessment} />
 
         <div>
           <h4 className="font-semibold text-slate-700">Medical Decision Making</h4>

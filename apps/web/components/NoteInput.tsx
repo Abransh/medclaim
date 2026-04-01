@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ImageCapture from "./ImageCapture";
-import { SAMPLE_NOTES } from "@/lib/prompts";
-import { useGeminiLive } from "@/hooks/useGeminiLive";
+import { SAMPLE_SCENARIOS } from "@/lib/prompts";
 
 interface NoteInputProps {
   value: string;
@@ -15,18 +14,45 @@ interface NoteInputProps {
 }
 
 export default function NoteInput({ value, onChange, onAnalyze, onExtractImage, isLoading, isExtracting }: NoteInputProps) {
-  const valueRef = useRef(value);
-  valueRef.current = value;
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-  const handleTranscript = useCallback((text: string) => {
-    const current = valueRef.current;
-    const separator = current && !current.endsWith(" ") ? " " : "";
-    onChange(current + separator + text);
-  }, [onChange]);
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    setSpeechSupported(!!SpeechRecognition);
+  }, []);
 
-  const { isListening, isConnecting, toggle } = useGeminiLive({
-    onTranscript: handleTranscript,
-  });
+  const toggleDictation = useCallback(() => {
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      onChange(value + " " + transcript);
+    };
+
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+
+    recognition.start();
+    recognitionRef.current = recognition;
+    setIsListening(true);
+  }, [isListening, onChange, value]);
 
   return (
     <div className="space-y-3">
@@ -41,39 +67,41 @@ export default function NoteInput({ value, onChange, onAnalyze, onExtractImage, 
       <div className="flex flex-wrap items-center gap-2">
         <ImageCapture onExtract={onExtractImage} isExtracting={isExtracting} />
 
-        <button
-          type="button"
-          onClick={toggle}
-          disabled={isConnecting}
-          className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium shadow-sm transition ${
-            isListening
-              ? "border-red-300 bg-red-50 text-red-700 hover:bg-red-100"
-              : isConnecting
-                ? "border-amber-300 bg-amber-50 text-amber-700"
+        {speechSupported && (
+          <button
+            type="button"
+            onClick={toggleDictation}
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium shadow-sm transition ${
+              isListening
+                ? "border-red-300 bg-red-50 text-red-700 hover:bg-red-100"
                 : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
-          }`}
-        >
-          {isListening && <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />}
-          {isConnecting && (
-            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            }`}
+          >
+            {isListening && <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />}
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
             </svg>
-          )}
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-          </svg>
-          {isConnecting ? "Connecting..." : isListening ? "Stop" : "Dictate"}
-        </button>
+            {isListening ? "Stop" : "Dictate"}
+          </button>
+        )}
 
-        <button
-          type="button"
-          onClick={() => onChange(SAMPLE_NOTES)}
+        <select
+          onChange={(e) => {
+            const key = e.target.value;
+            if (key && key in SAMPLE_SCENARIOS) {
+              onChange(SAMPLE_SCENARIOS[key as keyof typeof SAMPLE_SCENARIOS].notes);
+            }
+            e.target.value = "";
+          }}
           disabled={isLoading}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50"
+          defaultValue=""
         >
-          Load Sample
-        </button>
+          <option value="" disabled>Load Sample...</option>
+          {Object.entries(SAMPLE_SCENARIOS).map(([key, s]) => (
+            <option key={key} value={key}>{s.label}</option>
+          ))}
+        </select>
 
         <div className="flex-1" />
 

@@ -59,11 +59,11 @@ export interface AnalysisResult {
     effort: "Easy" | "Medium" | "Hard";
   }>;
   code_recommendation: {
-    current_code: string;
-    recommended_code: string;
+    suggested_code: string;
+    safe_code: string;
     reasoning: string;
-    with_fixes_code: string;
-    with_fixes_reasoning: string;
+    if_improved_code: string;
+    if_improved_reasoning: string;
   };
   summary: string;
 }

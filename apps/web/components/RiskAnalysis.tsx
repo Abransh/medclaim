@@ -43,17 +43,21 @@ export default function RiskAnalysis({ data }: { data: RiskData }) {
       {data.code_recommendation && (
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h3 className="mb-3 text-lg font-semibold text-slate-900">Code Recommendation</h3>
-          <div className="grid gap-3 text-sm sm:grid-cols-2">
+          <div className="grid gap-3 text-sm sm:grid-cols-3">
             <div className="rounded-lg bg-slate-50 p-3">
-              <p className="text-xs font-medium text-slate-500">Current Code</p>
-              <p className="font-mono text-lg font-bold text-slate-800">{data.code_recommendation.current_code}</p>
-              <p className="mt-1 text-xs text-slate-500">Recommended: <span className="font-semibold text-slate-700">{data.code_recommendation.recommended_code}</span></p>
+              <p className="text-xs font-medium text-slate-500">AI Suggested Code</p>
+              <p className="font-mono text-lg font-bold text-slate-800">{data.code_recommendation.suggested_code}</p>
               <p className="mt-1 text-xs text-slate-600">{data.code_recommendation.reasoning}</p>
             </div>
+            <div className="rounded-lg bg-amber-50 p-3">
+              <p className="text-xs font-medium text-amber-700">Audit-Safe Code</p>
+              <p className="font-mono text-lg font-bold text-amber-800">{data.code_recommendation.safe_code}</p>
+              <p className="mt-1 text-xs text-amber-700">Recommended to minimize denial risk</p>
+            </div>
             <div className="rounded-lg bg-teal-50 p-3">
-              <p className="text-xs font-medium text-teal-600">With Fixes Applied</p>
-              <p className="font-mono text-lg font-bold text-teal-700">{data.code_recommendation.with_fixes_code}</p>
-              <p className="mt-1 text-xs text-teal-700">{data.code_recommendation.with_fixes_reasoning}</p>
+              <p className="text-xs font-medium text-teal-600">If Documentation Improved</p>
+              <p className="font-mono text-lg font-bold text-teal-700">{data.code_recommendation.if_improved_code}</p>
+              <p className="mt-1 text-xs text-teal-700">{data.code_recommendation.if_improved_reasoning}</p>
             </div>
           </div>
         </div>
