@@ -1,3 +1,11 @@
+export interface CptCode {
+  code: string;
+  description: string;
+  justification: string;
+  is_addon: boolean;
+  addon_to?: string;
+}
+
 export interface AnalysisResult {
   chart: {
     chief_complaint: string;
@@ -9,10 +17,11 @@ export interface AnalysisResult {
     };
     ros: {
       systems_reviewed: string[];
-      ros_level: "Problem Pertinent" | "Extended" | "Complete";
+      ros_level: "Problem Pertinent" | "Extended" | "Complete" | "None";
       note: string;
     };
     exam_assessment: string;
+    mse_documented: boolean;
     mdm: {
       problems: { level: string; justification: string };
       data: { level: string; justification: string };
@@ -21,16 +30,17 @@ export interface AnalysisResult {
     };
     plan: string;
     time: {
-      documented_minutes: number | null;
+      total_minutes: number | null;
+      therapy_minutes: number | null;
+      medical_minutes: number | null;
       time_based_code: string | null;
       note: string;
     };
   };
-  cpt: {
-    code: string;
-    description: string;
-    justification_by_mdm: string;
-    justification_by_time: string;
+  cpt_codes: CptCode[];
+  cpt_justification: {
+    by_mdm: string;
+    by_time: string;
     confidence: "Low" | "Medium" | "High";
     upgrade_potential: string;
   };
@@ -59,10 +69,10 @@ export interface AnalysisResult {
     effort: "Easy" | "Medium" | "Hard";
   }>;
   code_recommendation: {
-    suggested_code: string;
-    safe_code: string;
+    suggested_codes: string;
+    safe_codes: string;
     reasoning: string;
-    if_improved_code: string;
+    if_improved_codes: string;
     if_improved_reasoning: string;
   };
   summary: string;

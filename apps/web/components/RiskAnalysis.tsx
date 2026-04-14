@@ -45,18 +45,18 @@ export default function RiskAnalysis({ data }: { data: RiskData }) {
           <h3 className="mb-3 text-lg font-semibold text-slate-900">Code Recommendation</h3>
           <div className="grid gap-3 text-sm sm:grid-cols-3">
             <div className="rounded-lg bg-slate-50 p-3">
-              <p className="text-xs font-medium text-slate-500">AI Suggested Code</p>
-              <p className="font-mono text-lg font-bold text-slate-800">{data.code_recommendation.suggested_code}</p>
+              <p className="text-xs font-medium text-slate-500">AI Suggested Codes</p>
+              <p className="font-mono text-lg font-bold text-slate-800">{data.code_recommendation.suggested_codes}</p>
               <p className="mt-1 text-xs text-slate-600">{data.code_recommendation.reasoning}</p>
             </div>
             <div className="rounded-lg bg-amber-50 p-3">
-              <p className="text-xs font-medium text-amber-700">Audit-Safe Code</p>
-              <p className="font-mono text-lg font-bold text-amber-800">{data.code_recommendation.safe_code}</p>
+              <p className="text-xs font-medium text-amber-700">Audit-Safe Codes</p>
+              <p className="font-mono text-lg font-bold text-amber-800">{data.code_recommendation.safe_codes}</p>
               <p className="mt-1 text-xs text-amber-700">Recommended to minimize denial risk</p>
             </div>
             <div className="rounded-lg bg-teal-50 p-3">
               <p className="text-xs font-medium text-teal-600">If Documentation Improved</p>
-              <p className="font-mono text-lg font-bold text-teal-700">{data.code_recommendation.if_improved_code}</p>
+              <p className="font-mono text-lg font-bold text-teal-700">{data.code_recommendation.if_improved_codes}</p>
               <p className="mt-1 text-xs text-teal-700">{data.code_recommendation.if_improved_reasoning}</p>
             </div>
           </div>

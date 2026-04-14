@@ -21,6 +21,7 @@ export default function StructuredChart({ chart }: { chart: AnalysisResult["char
       chart.ros.note ? `  Note: ${chart.ros.note}` : "",
       "",
       `MENTAL STATUS EXAM: ${chart.exam_assessment}`,
+      `  MSE Documented: ${chart.mse_documented ? "Yes" : "No"}`,
       "",
       `MEDICAL DECISION MAKING:`,
       `  Problems: ${chart.mdm.problems.level} — ${chart.mdm.problems.justification}`,
@@ -30,8 +31,8 @@ export default function StructuredChart({ chart }: { chart: AnalysisResult["char
       "",
       `PLAN: ${chart.plan}`,
       "",
-      chart.time.documented_minutes
-        ? `TIME: ${chart.time.documented_minutes} minutes${chart.time.time_based_code ? ` (supports ${chart.time.time_based_code})` : ""}`
+      chart.time.total_minutes
+        ? `TIME: ${chart.time.total_minutes} minutes total${chart.time.therapy_minutes ? `, ${chart.time.therapy_minutes} min therapy` : ""}${chart.time.medical_minutes ? `, ${chart.time.medical_minutes} min medical` : ""}${chart.time.time_based_code ? ` (supports ${chart.time.time_based_code})` : ""}`
         : `TIME: Not documented`,
       chart.time.note ? `  Note: ${chart.time.note}` : "",
     ].filter(Boolean).join("\n");
@@ -82,7 +83,7 @@ export default function StructuredChart({ chart }: { chart: AnalysisResult["char
             ))}
             {chart.hpi.elements_missing.map((el) => (
               <span key={el} className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
-                {el} (missing)
+                {el} (not in notes)
               </span>
             ))}
           </div>
@@ -106,7 +107,17 @@ export default function StructuredChart({ chart }: { chart: AnalysisResult["char
           </p>
         </div>
 
-        <Section title="Mental Status Exam" content={chart.exam_assessment} />
+        <div>
+          <h4 className="font-semibold text-slate-700">
+            Mental Status Exam
+            {!chart.mse_documented && (
+              <span className="ml-2 rounded bg-amber-50 px-1.5 py-0.5 text-xs font-medium text-amber-700">
+                Not in notes
+              </span>
+            )}
+          </h4>
+          <p className="mt-1 text-slate-600 whitespace-pre-wrap">{chart.exam_assessment}</p>
+        </div>
 
         <div>
           <h4 className="font-semibold text-slate-700">Medical Decision Making</h4>
@@ -136,11 +147,21 @@ export default function StructuredChart({ chart }: { chart: AnalysisResult["char
         <div>
           <h4 className="font-semibold text-slate-700">Time</h4>
           <p className="mt-1 text-slate-600">
-            {chart.time.documented_minutes
-              ? `${chart.time.documented_minutes} minutes documented`
-              : "No time documented"}
-            {chart.time.time_based_code && (
+            {chart.time.total_minutes
+              ? `${chart.time.total_minutes} minutes total`
+              : "Not documented"}
+            {chart.time.therapy_minutes != null && (
+              <span className="ml-2 rounded bg-purple-50 px-1.5 py-0.5 text-xs font-medium text-purple-700">
+                {chart.time.therapy_minutes} min therapy
+              </span>
+            )}
+            {chart.time.medical_minutes != null && (
               <span className="ml-2 rounded bg-blue-50 px-1.5 py-0.5 text-xs font-medium text-blue-700">
+                {chart.time.medical_minutes} min medical
+              </span>
+            )}
+            {chart.time.time_based_code && (
+              <span className="ml-2 rounded bg-slate-100 px-1.5 py-0.5 text-xs font-medium text-slate-700">
                 Supports {chart.time.time_based_code}
               </span>
             )}

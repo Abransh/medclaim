@@ -52,7 +52,7 @@ export default function ResultsPanel({ results }: { results: AnalysisResult }) {
           <StructuredChart chart={results.chart} />
         </div>
         <div className={activeTab !== "codes" ? "hidden md:block" : ""}>
-          <CodesPanel cpt={results.cpt} icd10={results.icd10} />
+          <CodesPanel cptCodes={results.cpt_codes} cptJustification={results.cpt_justification} icd10={results.icd10} />
         </div>
       </div>
     </div>
